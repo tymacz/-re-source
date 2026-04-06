@@ -4,6 +4,7 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { Toaster } from "sonner";
+import { Navbar } from "@/components/Navbar";
 
 const zain = Zain({
   subsets: ["latin"],
@@ -12,21 +13,29 @@ const zain = Zain({
 });
 
 export const metadata: Metadata = {
-  title: "(RE)Sources Relationnel",
-  description: "Créateur de connexion et de ressources humaines",
+  title: "(RE)Sources Relationnelles",
+  description: "Plateforme de sources, ressources et d'échanges.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
-
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className={`${zain.variable} antialiased`}>
-      <body className="bg-background text-foreground">
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+    <html lang="fr" className={`${zain.variable} antialiased`} suppressHydrationWarning>
+      <body className="flex min-h-screen flex-col bg-background text-foreground font-sans">
+        <TRPCReactProvider>
+          
+          <Navbar />
+          
+          <main className="flex flex-1 flex-col">
+            {children}
+          </main>
+          
+          <Toaster richColors closeButton />
+          
+        </TRPCReactProvider>
       </body>
-      <Toaster richColors closeButton/>
     </html>
   );
 }
