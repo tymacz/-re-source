@@ -1,11 +1,15 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// --- ENUMS ---
 
 enum Visibilite {
   PUBLIQUE
@@ -33,24 +37,24 @@ enum TypeActionStats {
   CREATION
 }
 
-model Role {
-  id           String        @id @default(uuid())
-  libelle      String        @unique
-  utilisateurs Utilisateur[]
+enum RoleUser {
+  USER 
+  ADMIN 
 }
 
-model Utilisateur {
+model User {
   id                String   @id @default(uuid())
   email             String   @unique
-  mot_de_passe_hash String
-  nom               String
-  prenom            String
+  name               String
   est_actif         Boolean  @default(true)
   date_creation     DateTime @default(now())
 
-  role_id String
-  role    Role   @relation(fields: [role_id], references: [id])
-
+  role_id RoleUser @default(USER)
+  emailVerified Boolean @default(false)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @default(now()) @updatedAt
+  sessions              Session[]
+  accounts              Account[]
   ressources_creees  Ressource[]
   progressions       ProgressionUtilisateur[]
   commentaires       Commentaire[]
@@ -58,6 +62,8 @@ model Utilisateur {
   sessions_rejointes ParticipantSession[]
   messages           MessageSession[]
   logs_statistiques  StatistiqueLog[]
+
+  @@index([role_id])
 }
 
 model Categorie {
@@ -88,7 +94,7 @@ model Ressource {
   date_mise_a_jour   DateTime          @updatedAt
 
   auteur_id String
-  auteur    Utilisateur @relation(fields: [auteur_id], references: [id])
+  auteur    User   @relation(fields: [auteur_id], references: [id])
 
   categorie_id String
   categorie    Categorie @relation(fields: [categorie_id], references: [id])
@@ -103,6 +109,9 @@ model Ressource {
   commentaires      Commentaire[]
   sessions          SessionActivite[]
   logs_statistiques StatistiqueLog[]
+
+  @@index([auteur_id])
+  @@index([categorie_id])
 }
 
 model ProgressionUtilisateur {
@@ -113,8 +122,8 @@ model ProgressionUtilisateur {
   est_exploitee        Boolean  @default(false)
   date_derniere_action DateTime @updatedAt
 
-  utilisateur Utilisateur @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade)
-  ressource   Ressource   @relation(fields: [ressource_id], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade)
+  ressource Ressource @relation(fields: [ressource_id], references: [id], onDelete: Cascade)
 
   @@id([utilisateur_id, ressource_id])
 }
@@ -126,7 +135,7 @@ model Commentaire {
   est_modere       Boolean  @default(true)
 
   auteur_id String
-  auteur    Utilisateur @relation(fields: [auteur_id], references: [id], onDelete: Cascade)
+  auteur    User   @relation(fields: [auteur_id], references: [id], onDelete: Cascade)
 
   ressource_id String
   ressource    Ressource @relation(fields: [ressource_id], references: [id], onDelete: Cascade)
@@ -134,6 +143,9 @@ model Commentaire {
   parent_id String?
   parent    Commentaire?  @relation("ReponsesCommentaire", fields: [parent_id], references: [id], onDelete: Cascade)
   reponses  Commentaire[] @relation("ReponsesCommentaire")
+
+  @@index([auteur_id])
+  @@index([ressource_id])
 }
 
 model SessionActivite {
@@ -145,10 +157,13 @@ model SessionActivite {
   ressource    Ressource @relation(fields: [ressource_id], references: [id], onDelete: Cascade)
 
   initiateur_id String
-  initiateur    Utilisateur @relation(fields: [initiateur_id], references: [id], onDelete: Cascade)
+  initiateur    User   @relation(fields: [initiateur_id], references: [id], onDelete: Cascade)
 
   participants ParticipantSession[]
   messages     MessageSession[]
+
+  @@index([ressource_id])
+  @@index([initiateur_id])
 }
 
 model ParticipantSession {
@@ -157,8 +172,8 @@ model ParticipantSession {
   date_invitation DateTime @default(now())
   a_accepte       Boolean  @default(false)
 
-  session     SessionActivite @relation(fields: [session_id], references: [id], onDelete: Cascade)
-  utilisateur Utilisateur     @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade)
+  session   SessionActivite @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  user      User            @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade)
 
   @@id([session_id, utilisateur_id])
 }
@@ -172,7 +187,10 @@ model MessageSession {
   session    SessionActivite @relation(fields: [session_id], references: [id], onDelete: Cascade)
 
   auteur_id String
-  auteur    Utilisateur @relation(fields: [auteur_id], references: [id], onDelete: Cascade)
+  auteur    User   @relation(fields: [auteur_id], references: [id], onDelete: Cascade)
+
+  @@index([session_id])
+  @@index([auteur_id])
 }
 
 model StatistiqueLog {
@@ -182,8 +200,58 @@ model StatistiqueLog {
   zone_geographique String?
 
   utilisateur_id String?
-  utilisateur    Utilisateur? @relation(fields: [utilisateur_id], references: [id], onDelete: SetNull)
+  user           User?     @relation(fields: [utilisateur_id], references: [id], onDelete: SetNull)
 
   ressource_id String?
   ressource    Ressource? @relation(fields: [ressource_id], references: [id], onDelete: SetNull)
+}
+
+// --- AUTH TABLES (Optimisées) ---
+
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([providerId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }
