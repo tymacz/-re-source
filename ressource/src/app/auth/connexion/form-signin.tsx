@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/server/better-auth/client";
 import Link from "next/link";
+import { db } from "@/server/db";
 
 export default function SignInPage() {
   const router = useRouter();

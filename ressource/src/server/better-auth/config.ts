@@ -9,6 +9,16 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  hooks: {
+        afterSignIn: async (ctx) => {
+            const user = ctx.user;
+            if (!user.est_actif) {
+                throw new Error("ACCOUNT_DISABLED");
+            }
+            
+            return ctx;
+        },
+    },
 });
 
 export type Session = typeof auth.$Infer.Session;
