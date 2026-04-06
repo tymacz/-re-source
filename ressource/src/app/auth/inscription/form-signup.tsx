@@ -27,10 +27,10 @@ export default function SignInPage() {
     setIsPending(false);
 
     if (error) {
-      toast.error("Email ou mot de passe incorrect !",{position:"bottom-right"})
+      toast.error("Inscription échoué !",{position:"bottom-right"})
       return;
     }else{
-      toast.success("Connexion Réussie !",{position:"bottom-right"})
+      toast.success("Inscription Réussie !",{position:"bottom-right"})
     }
 
     router.push("/");
