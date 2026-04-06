@@ -68,7 +68,7 @@ export default function SignInPage() {
         <button 
           type="submit" 
           disabled={isPending}
-          className="bg-black text-white p-2 rounded mt-2 disabled:bg-gray-400"
+          className="bg-primary text-white p-2 rounded mt-2 disabled:bg-gray-400"
         >
           {isPending ? "Connexion..." : "Se connecter"}
         </button>
