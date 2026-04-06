@@ -1,89 +1,189 @@
-// Prisma schema for Better Auth
-// learn more: https://better-auth.com/docs/concepts/database
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
-
-// NOTE: When using mysql or sqlserver, uncomment the //@db.Text annotations in model Account below
-// Further reading:
-// https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  createdBy   User   @relation(fields: [createdById], references: [id])
-  createdById String
-
-  @@index([name])
+enum Visibilite {
+  PUBLIQUE
+  PARTAGEE
+  PRIVEE
 }
 
-model User {
-  id            String    @id
-  name          String //@db.Text
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String? //@db.Text
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  posts         Post[]
-
-  @@unique([email])
-  @@map("user")
+enum StatutPublication {
+  BROUILLON
+  EN_ATTENTE
+  VALIDEE
+  SUSPENDUE
 }
 
-model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ipAddress String? //@db.Text
-  userAgent String? //@db.Text
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([token])
-  @@map("session")
+enum StatutSession {
+  EN_COURS
+  TERMINEE
 }
 
-model Account {
-  id                    String    @id
-  accountId             String //@db.Text
-  providerId            String //@db.Text
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String? //@db.Text
-  refreshToken          String? //@db.Text
-  idToken               String? //@db.Text
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String? //@db.Text
-  password              String? //@db.Text
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-
-  @@map("account")
+enum TypeActionStats {
+  CONSULTATION
+  RECHERCHE
+  PARTAGE
+  EXPLOITATION
+  CREATION
 }
 
-model Verification {
-  id         String   @id
-  identifier String //@db.Text
-  value      String //@db.Text
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+model Role {
+  id           String        @id @default(uuid())
+  libelle      String        @unique
+  utilisateurs Utilisateur[]
+}
 
-  @@map("verification")
+model Utilisateur {
+  id                String   @id @default(uuid())
+  email             String   @unique
+  mot_de_passe_hash String
+  nom               String
+  prenom            String
+  est_actif         Boolean  @default(true)
+  date_creation     DateTime @default(now())
+
+  role_id String
+  role    Role   @relation(fields: [role_id], references: [id])
+
+  ressources_creees  Ressource[]
+  progressions       ProgressionUtilisateur[]
+  commentaires       Commentaire[]
+  sessions_initiees  SessionActivite[]
+  sessions_rejointes ParticipantSession[]
+  messages           MessageSession[]
+  logs_statistiques  StatistiqueLog[]
+}
+
+model Categorie {
+  id         String      @id @default(uuid())
+  libelle    String      @unique
+  ressources Ressource[]
+}
+
+model TypeRelation {
+  id         String      @id @default(uuid())
+  libelle    String      @unique
+  ressources Ressource[]
+}
+
+model TypeRessource {
+  id         String      @id @default(uuid())
+  libelle    String      @unique
+  ressources Ressource[]
+}
+
+model Ressource {
+  id                 String            @id @default(uuid())
+  titre              String
+  contenu            String            @db.Text
+  visibilite         Visibilite        @default(PRIVEE)
+  statut_publication StatutPublication @default(BROUILLON)
+  date_creation      DateTime          @default(now())
+  date_mise_a_jour   DateTime          @updatedAt
+
+  auteur_id String
+  auteur    Utilisateur @relation(fields: [auteur_id], references: [id])
+
+  categorie_id String
+  categorie    Categorie @relation(fields: [categorie_id], references: [id])
+
+  type_relation_id String
+  type_relation    TypeRelation @relation(fields: [type_relation_id], references: [id])
+
+  type_ressource_id String
+  type_ressource    TypeRessource @relation(fields: [type_ressource_id], references: [id])
+
+  progressions      ProgressionUtilisateur[]
+  commentaires      Commentaire[]
+  sessions          SessionActivite[]
+  logs_statistiques StatistiqueLog[]
+}
+
+model ProgressionUtilisateur {
+  utilisateur_id       String
+  ressource_id         String
+  est_favori           Boolean  @default(false)
+  est_mise_de_cote     Boolean  @default(false)
+  est_exploitee        Boolean  @default(false)
+  date_derniere_action DateTime @updatedAt
+
+  utilisateur Utilisateur @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade)
+  ressource   Ressource   @relation(fields: [ressource_id], references: [id], onDelete: Cascade)
+
+  @@id([utilisateur_id, ressource_id])
+}
+
+model Commentaire {
+  id               String   @id @default(uuid())
+  contenu          String   @db.Text
+  date_publication DateTime @default(now())
+  est_modere       Boolean  @default(true)
+
+  auteur_id String
+  auteur    Utilisateur @relation(fields: [auteur_id], references: [id], onDelete: Cascade)
+
+  ressource_id String
+  ressource    Ressource @relation(fields: [ressource_id], references: [id], onDelete: Cascade)
+
+  parent_id String?
+  parent    Commentaire?  @relation("ReponsesCommentaire", fields: [parent_id], references: [id], onDelete: Cascade)
+  reponses  Commentaire[] @relation("ReponsesCommentaire")
+}
+
+model SessionActivite {
+  id             String        @id @default(uuid())
+  date_demarrage DateTime      @default(now())
+  statut         StatutSession @default(EN_COURS)
+
+  ressource_id String
+  ressource    Ressource @relation(fields: [ressource_id], references: [id], onDelete: Cascade)
+
+  initiateur_id String
+  initiateur    Utilisateur @relation(fields: [initiateur_id], references: [id], onDelete: Cascade)
+
+  participants ParticipantSession[]
+  messages     MessageSession[]
+}
+
+model ParticipantSession {
+  session_id      String
+  utilisateur_id  String
+  date_invitation DateTime @default(now())
+  a_accepte       Boolean  @default(false)
+
+  session     SessionActivite @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  utilisateur Utilisateur     @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade)
+
+  @@id([session_id, utilisateur_id])
+}
+
+model MessageSession {
+  id         String   @id @default(uuid())
+  contenu    String   @db.Text
+  date_envoi DateTime @default(now())
+
+  session_id String
+  session    SessionActivite @relation(fields: [session_id], references: [id], onDelete: Cascade)
+
+  auteur_id String
+  auteur    Utilisateur @relation(fields: [auteur_id], references: [id], onDelete: Cascade)
+}
+
+model StatistiqueLog {
+  id                String          @id @default(uuid())
+  type_action       TypeActionStats
+  date_action       DateTime        @default(now())
+  zone_geographique String?
+
+  utilisateur_id String?
+  utilisateur    Utilisateur? @relation(fields: [utilisateur_id], references: [id], onDelete: SetNull)
+
+  ressource_id String?
+  ressource    Ressource? @relation(fields: [ressource_id], references: [id], onDelete: SetNull)
 }
