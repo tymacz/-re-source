@@ -132,3 +132,26 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+export const adminProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(async ({ ctx, next }) => {
+    if (!ctx.session?.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    const user = await ctx.db.user.findUnique({
+      where: { id: ctx.session.user.id },
+      select: { role_id: true },
+    });
+    if (user?.role_id !== "ADMIN") {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Accès réservé aux administrateurs",
+      });
+    }
+    return next({
+      ctx: {
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
+  });
