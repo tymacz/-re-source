@@ -123,12 +123,31 @@ export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
     if (!ctx.session?.user) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Vous devez être connecté." });
     }
+
+    if (!ctx.session.user.est_actif) {
+      throw new TRPCError({ 
+        code: "FORBIDDEN", 
+        message: "Votre compte a été suspendu." 
+      });
+    }
+
     return next({
       ctx: {
-        // infers the `session` as non-nullable
         session: { ...ctx.session, user: ctx.session.user },
       },
     });
   });
+
+
+export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.session.user.role_id !== "ADMIN") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Accès refusé : privilèges administrateur requis.",
+    });
+  }
+
+  return next({ ctx });
+});

@@ -293,7 +293,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/tymacz/Porjet_Info/-re-source/ressource/generated/prisma",
+      "value": "/Users/axel/Documents/GitHub/-re-source/ressource/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -311,7 +311,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/tymacz/Porjet_Info/-re-source/ressource/prisma/schema.prisma",
+    "sourceFilePath": "/Users/axel/Documents/GitHub/-re-source/ressource/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
