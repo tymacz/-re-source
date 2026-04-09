@@ -10,7 +10,7 @@ import { createRessourceAction } from "@/app/(main)/ressource/action";
 
 interface SelectOption {
   id: string;
-  nom: string;
+  libelle: string;
 }
 
 interface RessourceFormProps {
@@ -45,7 +45,7 @@ const onSubmit = async (data: RessourceFormValues) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 bg-white p-8 rounded-[2rem] border border-border shadow-sm">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 bg- p-8 rounded-[2rem] border border-border shadow-sm">
       <div className="space-y-2">
         <h2 className="text-3xl font-bold text-primary tracking-tight">Nouvelle Ressource</h2>
         <p className="text-muted-foreground font-medium">Partagez votre savoir avec la communauté (RE)Sources.</p>
@@ -83,7 +83,7 @@ const onSubmit = async (data: RessourceFormValues) => {
             <label htmlFor="categorie_id" className="text-sm font-bold text-primary px-1">CATÉGORIE</label>
             <select id="categorie_id" {...register("categorie_id")} className="bg-brand-ivory/40 border-none rounded-xl p-3 focus:ring-2 focus:ring-brand-coral outline-none font-medium">
               <option value="">Choisir...</option>
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
+              {categories.map((c) => <option key={c.id} value={c.id}>{c.libelle}</option>)}
             </select>
           </div>
 
@@ -91,7 +91,7 @@ const onSubmit = async (data: RessourceFormValues) => {
             <label htmlFor="type_relation_id" className="text-sm font-bold text-primary px-1">RELATION</label>
             <select id="type_relation_id" {...register("type_relation_id")} className="bg-brand-ivory/40 border-none rounded-xl p-3 focus:ring-2 focus:ring-brand-coral outline-none font-medium">
               <option value="">Choisir...</option>
-              {typeRelations.map((tr) => <option key={tr.id} value={tr.id}>{tr.nom}</option>)}
+              {typeRelations.map((tr) => <option key={tr.id} value={tr.id}>{tr.libelle}</option>)}
             </select>
           </div>
 
@@ -99,7 +99,7 @@ const onSubmit = async (data: RessourceFormValues) => {
             <label htmlFor="type_ressource_id" className="text-sm font-bold text-primary px-1">TYPE</label>
             <select id="type_ressource_id" {...register("type_ressource_id")} className="bg-brand-ivory/40 border-none rounded-xl p-3 focus:ring-2 focus:ring-brand-coral outline-none font-medium">
               <option value="">Choisir...</option>
-              {typeRessources.map((tr) => <option key={tr.id} value={tr.id}>{tr.nom}</option>)}
+              {typeRessources.map((tr) => <option key={tr.id} value={tr.id}>{tr.libelle}</option>)}
             </select>
           </div>
         </div>
