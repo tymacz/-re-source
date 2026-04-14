@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/server/better-auth/client";
 import Link from "next/link";
-import { db } from "@/server/db";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -73,7 +72,7 @@ export default function SignInPage() {
           {isPending ? "Connexion..." : "Se connecter"}
         </button>
       </form>
-      <Link href="/auth/inscription">vous ne posséder pas de compte ?</Link>
+      <Link href="/inscription">vous ne posséder pas de compte ?</Link>
     </div>
   );
 }

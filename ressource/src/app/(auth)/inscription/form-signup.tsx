@@ -96,7 +96,7 @@ export default function SignInPage() {
           {isPending ? "Inscription..." : "S'inscrire"}
         </button>
           </form>
-          <Link href="/auth/connexion">Déjà un compte ?</Link>
+          <Link href="/connexion">Déjà un compte ?</Link>
 
     </div>
   );

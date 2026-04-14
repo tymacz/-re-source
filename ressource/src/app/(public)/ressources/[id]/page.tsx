@@ -1,0 +1,97 @@
+"use client";
+
+import { api } from "@/trpc/react";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { ArrowLeft, Calendar, User, Tag, Layers, HeartHandshake } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+
+export default function DetailRessourcePage({ params }: { params: { id: string } }) {
+  const { data: ressource, isLoading, error } = api.ressource.getById.useQuery({
+    id: params.id,
+  });
+
+  // Gestion de l'état de chargement
+  if (isLoading) {
+    return (
+      <div className="container mx-auto max-w-4xl px-4 py-12">
+        <Skeleton className="h-8 w-32 mb-8" />
+        <Skeleton className="h-12 w-3/4 mb-6" />
+        <div className="flex gap-4 mb-12">
+          <Skeleton className="h-6 w-24" />
+          <Skeleton className="h-6 w-24" />
+        </div>
+        <Skeleton className="h-[400px] w-full" />
+      </div>
+    );
+  }
+
+  if (error || !ressource) {
+    return (
+      <div className="container mx-auto max-w-4xl px-4 py-24 text-center">
+        <h1 className="text-3xl font-bold text-foreground mb-4">Ressource introuvable</h1>
+        <p className="text-muted-foreground mb-8">
+          La ressource que vous cherchez napos;existe pas ou napos;est plus disponible publiquement.
+        </p>
+        <Link href="/catalogue">
+          <Button>Retourner au catalogue</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background pb-16">
+      <main className="container mx-auto max-w-4xl px-4 py-12">
+        
+        <Link href="/catalogue" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors mb-8">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Retour au catalogue
+        </Link>
+
+        <header className="mb-10 space-y-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge variant="secondary" className="bg-secondary/20 text-secondary-foreground text-sm flex items-center gap-1.5">
+              <Tag className="h-3.5 w-3.5" />
+              {ressource.categorie.libelle}
+            </Badge>
+            <Badge variant="outline" className="text-sm flex items-center gap-1.5 border-primary/20">
+              <HeartHandshake className="h-3.5 w-3.5 text-primary" />
+              {ressource.type_relation.libelle}
+            </Badge>
+            <Badge variant="outline" className="text-sm flex items-center gap-1.5 border-primary/20">
+              <Layers className="h-3.5 w-3.5 text-primary" />
+              {ressource.type_ressource.libelle}
+            </Badge>
+          </div>
+
+          <h1 className="text-4xl font-black tracking-tight text-foreground md:text-5xl">
+            {ressource.titre}
+          </h1>
+
+          <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground border-y border-border/50 py-4">
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              <span className="font-medium text-foreground">Par {ressource.auteur.name}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span>Publié le {format(ressource.date_creation, "d MMMM yyyy", { locale: fr })}</span>
+            </div>
+          </div>
+        </header>
+
+        <article className="prose prose-lg prose-slate max-w-none dark:prose-invert">
+
+          <div className="whitespace-pre-wrap leading-relaxed text-foreground/90">
+            {ressource.contenu}
+          </div>
+        </article>
+
+      </main>
+    </div>
+  );
+}

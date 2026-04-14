@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Menu, Plus, User, LayoutDashboard, Settings, LogOut, BookOpen, Activity } from "lucide-react";
+import { Menu, Plus, User, LayoutDashboard, Settings, LogOut, BookOpen, Activity, HelpCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,20 +21,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { authClient } from "@/lib/auth-client";
-const mockSession = {
-  isLoggedIn: true,
-  user: { name: "Citoyen Dupont", initials: "CD", role: "CITOYEN" },
-};
+import { authClient } from "@/lib/auth-client"; // Vérifie que ce chemin est le bon pour ton projet
 
+// Mise à jour des liens publics
 const navigationLinks = [
   { name: "Catalogue", href: "/catalogue", icon: BookOpen },
-  { name: "Activités & Jeux", href: "/activites", icon: Activity },
+  { name: "Activités & Jeux", href: "/activites", icon: Activity }, // Prêt pour plus tard
+  { name: "Aide", href: "/aide", icon: HelpCircle }, // Ajout de la page d'aide
 ];
 
 export function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false);
   const { data: session, isPending } = authClient.useSession();
+
   const getInitials = (name?: string) => {
     if (!name) return "U";
     return name
@@ -44,11 +43,12 @@ export function Navbar() {
       .toUpperCase()
       .substring(0, 2);
   };
-  if (isPending) return <div className="h-10 w-10 animate-pulse rounded-full bg-muted" />;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
         
+        {/* MENU MOBILE */}
         <div className="md:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
@@ -78,10 +78,11 @@ export function Navbar() {
                 
                 <div className="my-4 h-px w-full bg-border" />
                 
-                {mockSession.isLoggedIn ? (
+                {/* Condition basée sur la VRAIE session */}
+                {session ? (
                   <>
                     <Link
-                      href="/dashboard"
+                      href="/tableau-de-bord"
                       onClick={() => setIsOpen(false)}
                       className="flex items-center gap-2 text-lg font-medium text-foreground hover:text-primary"
                     >
@@ -89,16 +90,27 @@ export function Navbar() {
                       Ma Progression
                     </Link>
                     <Link
-                      href="/ressources/creer"
+                      href="/mes-ressources/creer"
                       onClick={() => setIsOpen(false)}
                       className="flex items-center gap-2 text-lg font-bold text-primary"
                     >
                       <Plus className="h-5 w-5" />
                       Créer une ressource
                     </Link>
+                    
+                    {session.user.role_id === "ADMIN" && (
+                       <Link
+                       href="/admin"
+                       onClick={() => setIsOpen(false)}
+                       className="flex items-center gap-2 text-lg font-bold text-destructive"
+                     >
+                       <Settings className="h-5 w-5" />
+                       Administration
+                     </Link>
+                    )}
                   </>
                 ) : (
-                  <Link href="/login" onClick={() => setIsOpen(false)}>
+                  <Link href="/auth/connexion" onClick={() => setIsOpen(false)}>
                     <Button className="w-full">Se connecter</Button>
                   </Link>
                 )}
@@ -107,12 +119,14 @@ export function Navbar() {
           </Sheet>
         </div>
 
+        {/* LOGO */}
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl font-bold tracking-tight text-primary md:text-2xl">
             (RE)<span className="text-foreground">SOURCES</span>
           </span>
         </Link>
 
+        {/* NAVIGATION DESKTOP */}
         <nav className="hidden items-center gap-8 md:flex">
           {navigationLinks.map((link) => (
             <Link
@@ -125,78 +139,80 @@ export function Navbar() {
           ))}
         </nav>
 
+        {/* BOUTONS ACTIONS / PROFIL DESKTOP */}
         <div className="flex items-center gap-4">
-          {!isPending && session ? (
-  <>
-    {/* Bouton Créer réservé aux citoyens connectés [cite: 23, 77, 90] */}
-    <Link href="/ressources/creer" className="hidden md:block">
-      <Button className="rounded-full shadow-sm">
-        <Plus className="mr-2 h-4 w-4" />
-        Créer
-      </Button>
-    </Link>
+          {isPending ? (
+            <div className="h-10 w-10 animate-pulse rounded-full bg-muted" />
+          ) : session ? (
+            <>
+              {/* Bouton Créer mis à jour */}
+              <Link href="/mes-ressources/creer" className="hidden md:block">
+                <Button className="rounded-full shadow-sm">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Créer
+                </Button>
+              </Link>
 
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-          <Avatar className="h-10 w-10 border-2 border-transparent hover:border-primary transition-all">
-            {/* Image réelle de l'utilisateur (si présente via OAuth ou Upload) */}
-            <AvatarImage src={session.user.image ?? ""} alt={session.user.name} />
-            <AvatarFallback className="bg-secondary text-secondary-foreground font-bold">
-              {getInitials(session.user.name)}
-            </AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{session.user.name}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {session.user.role_id === "ADMIN" ? "Administrateur" : "Citoyen"}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/dashboard" className="cursor-pointer flex items-center">
-            <LayoutDashboard className="mr-2 h-4 w-4" />
-            <span>Ma Progression</span>
-          </Link>
-        </DropdownMenuItem>
-        
-        {session.user.role_id === "ADMIN" && (
-          <DropdownMenuItem asChild>
-            <Link href="/admin" className="cursor-pointer flex items-center font-bold text-primary">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Back-Office Admin</span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10 border-2 border-transparent hover:border-primary transition-all">
+                      <AvatarImage src={session.user.image ?? ""} alt={session.user.name} />
+                      <AvatarFallback className="bg-secondary text-secondary-foreground font-bold">
+                        {getInitials(session.user.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{session.user.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {session.user.role_id === "ADMIN" ? "Administrateur" : "Citoyen"}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  
+                  {/* Liens du Dropdown mis à jour */}
+                  <DropdownMenuItem asChild>
+                    <Link href="/tableau-de-bord" className="cursor-pointer flex items-center">
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      <span>Ma Progression</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  
+                  {session.user.role_id === "ADMIN" && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="cursor-pointer flex items-center font-bold text-primary">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Back-Office Admin</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                    onClick={async () => {
+                      await authClient.signOut();
+                      window.location.reload(); 
+                    }}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Se déconnecter</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <Link href="/auth/connexion" className="hidden md:block">
+              <Button variant="outline" className="rounded-full">
+                Se connecter
+              </Button>
             </Link>
-          </DropdownMenuItem>
-        )}
-        
-        <DropdownMenuSeparator />
-        <DropdownMenuItem 
-          className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
-          onClick={async () => {
-            await authClient.signOut();
-            window.location.reload(); // On recharge pour nettoyer l'état local
-          }}
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Se déconnecter</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </>
-) : (
-  !isPending && (
-    <Link href="/login" className="hidden md:block">
-      <Button variant="outline" className="rounded-full">
-        Se connecter
-      </Button>
-    </Link>
-  )
-)}
+          )}
         </div>
 
       </div>
