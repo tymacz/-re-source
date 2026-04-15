@@ -120,16 +120,15 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure
-  .use(timingMiddleware)
   .use(({ ctx, next }) => {
     if (!ctx.session?.user) {
-      throw new TRPCError({ code: "UNAUTHORIZED", message: "Vous devez être connecté." });
+      throw new TRPCError({ code: "UNAUTHORIZED" });
     }
-
-    if (!ctx.session.user.est_actif) {
+    
+    if (ctx.session.user.est_actif === false) {
       throw new TRPCError({ 
         code: "FORBIDDEN", 
-        message: "Votre compte a été suspendu." 
+        message: "Votre compte a été désactivé par un administrateur." 
       });
     }
 
@@ -139,7 +138,6 @@ export const protectedProcedure = t.procedure
       },
     });
   });
-
 
 export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.session.user.role_id !== "ADMIN") {

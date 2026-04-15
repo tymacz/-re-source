@@ -17,23 +17,22 @@ export default function SignInPage() {
     setIsPending(true);
 
     const { error } = await authClient.signIn.email({
-      email : email,
-      password : password,
+      email: email,
+      password: password,
     });
 
     setIsPending(false);
 
     if (error) {
-      toast.error("Email ou mot de passe incorrect !",{position:"bottom-right"})
+      toast.error(error.message ?? "Email ou mot de passe incorrect !", { position: "bottom-right" });
       return;
-    }else{
-      toast.success("Connexion Réussie !",{position:"bottom-right"})
+    } else {
+      toast.success("Connexion Réussie !", { position: "bottom-right" });
     }
 
     router.push("/");
     router.refresh();
   };
-
 
   return (
     <div>
@@ -72,7 +71,11 @@ export default function SignInPage() {
           {isPending ? "Connexion..." : "Se connecter"}
         </button>
       </form>
-      <Link href="/inscription">vous ne posséder pas de compte ?</Link>
+      <div className="mt-4 text-center">
+        <Link href="/inscription" className="text-sm text-primary hover:underline">
+          Vous ne possédez pas de compte ?
+        </Link>
+      </div>
     </div>
   );
 }

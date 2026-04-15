@@ -110,7 +110,7 @@ export function Navbar() {
                     )}
                   </>
                 ) : (
-                  <Link href="/auth/connexion" onClick={() => setIsOpen(false)}>
+                  <Link href="/connexion" onClick={() => setIsOpen(false)}>
                     <Button className="w-full">Se connecter</Button>
                   </Link>
                 )}
@@ -207,7 +207,7 @@ export function Navbar() {
               </DropdownMenu>
             </>
           ) : (
-            <Link href="/auth/connexion" className="hidden md:block">
+            <Link href="/connexion" className="hidden md:block">
               <Button variant="outline" className="rounded-full">
                 Se connecter
               </Button>
