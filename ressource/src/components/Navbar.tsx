@@ -21,9 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { authClient } from "@/lib/auth-client"; // Vérifie que ce chemin est le bon pour ton projet
-
-// Mise à jour des liens publics
+import { authClient } from "@/lib/auth-client";
 const navigationLinks = [
   { name: "Catalogue", href: "/catalogue", icon: BookOpen },
   { name: "Aide", href: "/aide", icon: HelpCircle },

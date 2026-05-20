@@ -15,8 +15,18 @@ const zain = Zain({
 export const metadata: Metadata = {
   title: "(RE)Sources Relationnelles",
   description: "Plateforme de sources, ressources et d'échanges.",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
   manifest: "/manifest.json",
+  themeColor: "#000000",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Re-Source",
+    startupImage: [],
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/icon-192.png", // Très important pour Safari/iOS
+  },
 };
 
 

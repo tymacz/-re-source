@@ -5,33 +5,41 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/server/better-auth/client";
 import Link from "next/link";
+import { api } from "@/trpc/react";
 
 export default function SignInPage() {
   const router = useRouter();
+  const utils = api.useUtils();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPending, setIsPending] = useState(false);
+  
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsPending(true);
 
-    const { error } = await authClient.signIn.email({
+    await authClient.signIn.email({
       email: email,
       password: password,
-    });
-
-    setIsPending(false);
-
-    if (error) {
-      toast.error(error.message ?? "Email ou mot de passe incorrect !", { position: "bottom-right" });
-      return;
-    } else {
-      toast.success("Connexion Réussie !", { position: "bottom-right" });
-    }
-
-    router.push("/");
-    router.refresh();
+    },
+    {
+        onRequest: () => {
+          setIsPending(true);
+        },
+        onSuccess: async () => {
+          toast.success("Connexion réussie !");
+                    await utils.invalidate();
+          await authClient.getSession();
+          router.push("/tableau-de-bord");
+          
+          router.refresh();
+        },
+        onError: (ctx) => {
+          setIsPending(false);
+          toast.error(ctx.error.message ?? "Identifiants incorrects.");
+        },
+      });
   };
 
   return (
