@@ -4,6 +4,7 @@ import { ressourceRouter } from "@/server/api/routers/ressource";
 import { progressionRouter } from "@/server/api/routers/progression";
 import { adminRouter } from "./routers/admin";
 import { commentaireRouter } from "./routers/commentaire";
+import { profilRouter } from "./routers/profil";
 import { sessionRouter } from "./routers/session";
 /**
  * This is the primary router for your server.
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   progression: progressionRouter,
   admin: adminRouter,
   commentaire: commentaireRouter,
+  profil: profilRouter,
   session: sessionRouter,
 });
 

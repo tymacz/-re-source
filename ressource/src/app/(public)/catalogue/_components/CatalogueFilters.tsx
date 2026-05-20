@@ -52,7 +52,7 @@ export function CatalogueFilters({
           <SelectTrigger>
             <SelectValue placeholder="Toutes les catégories" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-background/80" >
             <SelectItem value="toutes">Toutes les catégories</SelectItem>
             {categories?.map((cat) => (
               <SelectItem key={cat.id} value={cat.id}>
