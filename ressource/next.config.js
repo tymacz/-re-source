@@ -3,8 +3,14 @@
  * for Docker builds.
  */
 import "./src/env.js";
+import withPWAInit from "@ducanh2912/next-pwa";
+
+const withPWA = withPWAInit({
+  dest: "public",
+  disable: process.env.NODE_ENV === "development", 
+});
 
 /** @type {import("next").NextConfig} */
 const config = {};
-
-export default config;
+// @ts-expect-error
+export default withPWA(config);

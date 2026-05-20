@@ -17,6 +17,19 @@ getAllPublic: publicProcedure
         ? ["PUBLIQUE", "PARTAGEE"] 
         : ["PUBLIQUE"];
 
+      // --- AJOUT DES LOGS DE STATISTIQUES ---
+      // On log la recherche uniquement si le champ n'est pas vide
+      if (input.recherche && input.recherche.trim() !== "") {
+        await ctx.db.statistiqueLog.create({
+          data: {
+            type_action: "RECHERCHE",
+            // ctx.session?.user?.id renverra l'ID si connecté, sinon null (Anonyme)
+            utilisateur_id: ctx.session?.user?.id ?? null, 
+          },
+        });
+      }
+      // --------------------------------------
+
       return ctx.db.ressource.findMany({
         where: {
           visibilite: {
@@ -81,6 +94,18 @@ getById: publicProcedure
           message: "Vous n'avez pas l'autorisation de voir cette ressource.",
         });
       }
+
+      // --- AJOUT DES LOGS DE STATISTIQUES ---
+      // On log la consultation uniquement si l'utilisateur a passé les vérifications ci-dessus
+      await ctx.db.statistiqueLog.create({
+        data: {
+          type_action: "CONSULTATION",
+          ressource_id: ressource.id, // On lie la vue à la ressource consultée
+          utilisateur_id: userId ?? null, // Enregistre l'ID si connecté, sinon null
+        },
+      });
+      // --------------------------------------
+
       return ressource;
     }),
 
@@ -116,6 +141,14 @@ getById: publicProcedure
           visibilite: input.visibilite,
           statut_publication: statut,
           auteur_id: ctx.session.user.id,
+        },
+      });
+
+      await ctx.db.statistiqueLog.create({
+        data: {
+          type_action: "CREATION",
+          utilisateur_id: ctx.session.user.id,
+          ressource_id: nouvelleRessource.id, 
         },
       });
 

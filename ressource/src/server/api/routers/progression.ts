@@ -1,5 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-
+import { z } from "zod";
 export const progressionRouter = createTRPCRouter({
   getMonTableauDeBord: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
@@ -37,4 +37,33 @@ export const progressionRouter = createTRPCRouter({
       mesCreations,
     };
   }),
+  toggleFavori: protectedProcedure
+    .input(
+      z.object({
+        ressourceId: z.string(),
+        favori: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
+      const progression = await ctx.db.progressionUtilisateur.upsert({
+        where: {
+          utilisateur_id_ressource_id: {
+            utilisateur_id: userId,
+            ressource_id: input.ressourceId,
+          },
+        },
+        update: {
+          est_favori: input.favori,
+        },
+        create: {
+          utilisateur_id: userId,
+          ressource_id: input.ressourceId,
+          est_favori: input.favori,
+        },
+      });
+
+      return progression;
+    }),
 });

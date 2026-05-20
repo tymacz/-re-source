@@ -26,8 +26,7 @@ import { authClient } from "@/lib/auth-client"; // Vérifie que ce chemin est le
 // Mise à jour des liens publics
 const navigationLinks = [
   { name: "Catalogue", href: "/catalogue", icon: BookOpen },
-  { name: "Activités & Jeux", href: "/activites", icon: Activity }, // Prêt pour plus tard
-  { name: "Aide", href: "/aide", icon: HelpCircle }, // Ajout de la page d'aide
+  { name: "Aide", href: "/aide", icon: HelpCircle },
 ];
 
 export function Navbar() {
@@ -164,7 +163,7 @@ export function Navbar() {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuContent className="w-56 bg-background/80" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">{session.user.name}</p>

@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { CommentSection } from "./_components/CommentSection";
-
+import { BoutonFavori } from "./_components/Favoris";
 export default function DetailRessourcePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -23,6 +23,7 @@ export default function DetailRessourcePage({ params }: { params: Promise<{ id: 
   const { data: ressource, isLoading, error } = api.ressource.getById.useQuery({
     id: id,
   });
+
 
   const creerSession = api.session.creer.useMutation({
     onSuccess: (nouvelleSession) => {
@@ -61,14 +62,16 @@ export default function DetailRessourcePage({ params }: { params: Promise<{ id: 
   return (
     <div className="min-h-screen bg-background pb-16">
       <main className="container mx-auto max-w-4xl px-4 py-12">
-        
+                
+
         <Link href="/catalogue" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors mb-8">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour au catalogue
         </Link>
 
         <header className="mb-10 space-y-6">
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex justify-between" >
+            <div className="flex flex-wrap items-center gap-3">
             <Badge variant="secondary" className="bg-secondary/20 text-secondary-foreground text-sm flex items-center gap-1.5">
               <Tag className="h-3.5 w-3.5" />
               {ressource.categorie.libelle}
@@ -81,6 +84,9 @@ export default function DetailRessourcePage({ params }: { params: Promise<{ id: 
               <Layers className="h-3.5 w-3.5 text-primary" />
               {ressource.type_ressource.libelle}
             </Badge>
+
+            </div>
+            <BoutonFavori />
           </div>
 
           <h1 className="text-4xl font-black tracking-tight text-foreground md:text-5xl">

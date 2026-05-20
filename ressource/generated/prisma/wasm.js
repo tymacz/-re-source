@@ -293,7 +293,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\blavo\\Documents\\-re-source\\ressource\\generated\\prisma",
+      "value": "/Users/tymacz/Porjet_Info/-re-source/ressource/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -302,7 +302,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "darwin-arm64",
         "native": true
       },
       {
@@ -311,7 +311,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\blavo\\Documents\\-re-source\\ressource\\prisma\\schema.prisma",
+    "sourceFilePath": "/Users/tymacz/Porjet_Info/-re-source/ressource/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -325,6 +325,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {

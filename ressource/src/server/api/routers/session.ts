@@ -3,7 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 export const sessionRouter = createTRPCRouter({
-  creer: protectedProcedure
+creer: protectedProcedure
     .input(z.object({ ressourceId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const nouvelleSession = await ctx.db.sessionActivite.create({
@@ -18,6 +18,13 @@ export const sessionRouter = createTRPCRouter({
           session_id: nouvelleSession.id,
           utilisateur_id: ctx.session.user.id,
           a_accepte: true,
+        },
+      });
+      await ctx.db.statistiqueLog.create({
+        data: {
+          type_action: "EXPLOITATION",
+          utilisateur_id: ctx.session.user.id,
+          ressource_id: input.ressourceId,
         },
       });
 
