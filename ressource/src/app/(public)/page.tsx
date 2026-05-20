@@ -30,7 +30,7 @@ export default function HomePage() {
                 Explorer le catalogue
               </Button>
             </Link>
-            <Link href="/register">
+            <Link href="/inscription">
               <Button size="lg" variant="outline" className="w-full rounded-full text-base sm:w-auto border-primary/20 hover:bg-primary/5 transition-all">
                 Rejoindre la communauté
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -44,7 +44,7 @@ export default function HomePage() {
         <div className="container mx-auto max-w-3xl text-center rounded-2xl bg-primary/5 p-8 md:p-12 border border-primary/10">
           <h2 className="mb-6 text-2xl font-bold text-foreground">Au cœur de nos besoins fondamentaux</h2>
           <p className="text-lg leading-relaxed text-muted-foreground font-medium">
-            D'après la pyramide de Maslow, nos besoins se structurent jusqu'à notre accomplissement personnel[cite: 14]. Le levier le plus puissant pour y parvenir reste la qualité de nos relations aux autres : famille, amis, collègues. C'est toute la mission de cette plateforme.
+            D'après la pyramide de Maslow, nos besoins se structurent jusqu'à notre accomplissement personnel. Le levier le plus puissant pour y parvenir reste la qualité de nos relations aux autres : famille, amis, collègues. C'est toute la mission de cette plateforme.
           </p>
         </div>
       </section>
@@ -65,7 +65,7 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <CardDescription className="text-base font-medium text-foreground/80">
-                Accédez librement à des ressources de différents types [cite: 21] pour améliorer vos relations familiales, amicales ou professionnelles.
+                Accédez librement à des ressources de différents types pour améliorer vos relations familiales, amicales ou professionnelles.
               </CardDescription>
             </CardContent>
           </Card>
@@ -79,7 +79,7 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <CardDescription className="text-base font-medium text-foreground/80">
-                Filtrez facilement les contenus par type (vidéos, articles, jeux) et trouvez exactement ce qui correspond à votre besoin[cite: 22].
+                Filtrez facilement les contenus par type (vidéos, articles, jeux) et trouvez exactement ce qui correspond à votre besoin.
               </CardDescription>
             </CardContent>
           </Card>
@@ -93,7 +93,7 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <CardDescription className="text-base font-medium text-foreground/80">
-                Devenez acteur de la communauté. Créez vos propres ressources, partagez vos expériences et échangez avec les autres citoyens[cite: 23].
+                Devenez acteur de la communauté. Créez vos propres ressources, partagez vos expériences et échangez avec les autres citoyens.
               </CardDescription>
             </CardContent>
           </Card>
@@ -107,7 +107,7 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <CardDescription className="text-base font-medium text-foreground/80">
-                Consultez les statistiques en rapport aux ressources à disposition (consultations, recherches, partages)[cite: 24].
+                Consultez les statistiques en rapport aux ressources à disposition (consultations, recherches, partages).
               </CardDescription>
             </CardContent>
           </Card>

@@ -82,7 +82,7 @@ export function CommentSection({ ressourceId }: { ressourceId: string }) {
         <div className="bg-muted/30 p-6 rounded-xl text-center mb-10 border border-border/50">
           <p className="text-muted-foreground mb-4">Vous devez être connecté pour participer à la discussion.</p>
           <Button asChild variant="outline">
-            <Link href="/auth/connexion">Se connecter</Link>
+            <Link href="/connexion">Se connecter</Link>
           </Button>
         </div>
       )}

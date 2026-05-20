@@ -36,7 +36,7 @@ export default function AidePage() {
             <CardHeader>
               <div className="mb-2 flex items-center gap-3">
                 <BookOpen className="h-5 w-5 text-primary" />
-                <CardTitle className="text-xl font-bold">Quapos;est-ce que le catalogue ?</CardTitle>
+                <CardTitle className="text-xl font-bold">Qu&apos;est-ce que le catalogue ?</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
@@ -55,7 +55,7 @@ export default function AidePage() {
             </CardHeader>
             <CardContent>
               <CardDescription className="text-base text-foreground/80 leading-relaxed">
-                Créer un compte vous permet dapos;aller plus loin : vous pourrez sauvegarder vos ressources favorites, suivre votre progression, interagir avec la communauté via les commentaires et même proposer vos propres ressources.
+                Créer un compte vous permet d&apos;aller plus loin : vous pourrez sauvegarder vos ressources favorites, suivre votre progression, interagir avec la communauté via les commentaires et même proposer vos propres ressources.
               </CardDescription>
             </CardContent>
           </Card>
@@ -69,7 +69,7 @@ export default function AidePage() {
             </CardHeader>
             <CardContent>
               <CardDescription className="text-base text-foreground/80 leading-relaxed">
-                Chaque ressource proposée par un citoyen passe par une étape de validation par notre équipe de modérateurs. Cela garantit un espace dapos;échange sain, bienveillant et pertinent pour tous.
+                Chaque ressource proposée par un citoyen passe par une étape de validation par notre équipe de modérateurs. Cela garantit un espace d&apos;échange sain, bienveillant et pertinent pour tous.
               </CardDescription>
             </CardContent>
           </Card>
@@ -78,12 +78,12 @@ export default function AidePage() {
             <CardHeader>
               <div className="mb-2 flex items-center gap-3">
                 <HelpCircle className="h-5 w-5 text-primary" />
-                <CardTitle className="text-xl font-bold">Japos;ai un problème technique, que faire ?</CardTitle>
+                <CardTitle className="text-xl font-bold">J&apos;ai un problème technique, que faire ?</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <CardDescription className="text-base text-foreground/80 leading-relaxed">
-                Si vous rencontrez un bug ou une difficulté dapos;accès, vérifiez dapos;bord que votre navigateur est à jour. Si le problème persiste, vous pouvez contacter le support technique.
+                Si vous rencontrez un bug ou une difficulté d&apos;accès, vérifiez d&apos;abord que votre navigateur est à jour. Si le problème persiste, vous pouvez contacter le support technique.
               </CardDescription>
             </CardContent>
           </Card>
@@ -97,11 +97,11 @@ export default function AidePage() {
           <Mail className="mx-auto h-10 w-10 text-secondary-foreground mb-4" />
           <h2 className="mb-4 text-2xl font-bold text-foreground">Vous ne trouvez pas votre réponse ?</h2>
           <p className="mb-8 text-lg text-muted-foreground font-medium">
-            Notre équipe dapos;administration est à votre disposition pour toute question supplémentaire concernant la plateforme.
+            Notre équipe d&apos;administration est à votre disposition pour toute question supplémentaire concernant la plateforme.
           </p>
           <Link href="/">
             <Button size="lg" className="rounded-full shadow-md">
-              Retourner à lapos;accueil
+              Retourner à l&apos;accueil
             </Button>
           </Link>
         </div>
